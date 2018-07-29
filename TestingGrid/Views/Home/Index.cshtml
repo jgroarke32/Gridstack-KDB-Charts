@@ -1,0 +1,189 @@
+﻿
+<head>
+
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css" />
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.0/jquery-ui.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.3.0/gridstack.min.js'></script>
+    <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.3.0/gridstack.jQueryUI.min.js'></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+
+
+    <style type="text/css">
+        .grid-stack {
+            background: lightgoldenrodyellow;
+        }
+
+        .grid-stack-item-content {
+            color: #2c3e50;
+            text-align: center;
+            background-color: #18bc9c;
+        }
+    </style>
+</head>
+<body>
+    <button data-bind="click:add">Add</button>
+    <button data-bind="click:saveGrid">Save</button>
+    @*<button data-bind="click:twoWay">twoWay</button>*@
+    <div class="grid-stack" data-bind="gridStack:{ widgets:widgets }">
+        <div class="grid-stack-item" >
+            <div class="grid-stack-item-content">
+                @*<button data-bind="click: $parent.delete">Delete me</button>
+                    <div data-bind="text:x"></div><div data-bind="text:y"></div>
+                    <div data-bind="text:width"></div><div data-bind="text:height"></div>*@
+                <div data-bind="with: options">
+                    <div class="card-header" style="height:10%">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h3 class="text-left" data-bind="text: name"></h3>
+                            </div>
+                            <div class="col-sm-6">
+                                <ul class="panel-action">
+                                    <li><i class="fas fa-trash-alt remove-widget" data-bind="click: $root.delete"></i></li>
+                                    @*<li><button type="button" class="btn btn-primary" data-bind="click: $root.showoptions">options</button></li>*@
+                                    <li><i class="fas fa-edit" data-bind="click: $root.showoptions"></i></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @*<div class="pure-u-1">
+                            <div id="line-example">*@
+                        @*<h2>Charts</h2><input type="button" value="connect" data-bind="click:$root.startsub">*@
+                        <i class="fas fa-plug" data-bind="click:$root.startsub" style="cursor: pointer"></i>
+
+                        <canvas data-bind="attr: {id:id}"></canvas>
+                        @*</div>
+                            </div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" data-bind="with:currentWidget">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Options</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input data-bind="value: name" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="~/js/main.js"></script>
+<template id="card-layout">
+    <div class="card-header" style="height:10%">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="text-left">Featured</div>
+            </div>
+            <div class="col-sm-6">
+                <ul class="panel-action">
+                    <li>Menu</li>
+                    <li><i class="fa fa-chevron-down"></i></li>
+                    <li><i class="fas fa-trash-alt remove-widget"></i></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="card-body" style="width:100%; height:90%">
+        <div class="pure-u-1">
+            <div id="line-example">
+                <h2>Charts</h2><input type="button" value="connect" data-bind="click: function(){ connect()}">
+                <canvas data-bind="attr: {id:id}"></canvas>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+    .grid-stack {
+        /*   background: #66a3ff; */
+    }
+
+    .grid-container {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: 542px;
+        background: grey;
+    }
+
+    .grid-stack-item-content {
+        background: white;
+        color: #2c3e50;
+        font-family: 'Indie Flower';
+        text-align: center;
+        font-size: 20px;
+    }
+
+    .grid-stack-item-content {
+        color: #2c3e50;
+        text-align: center;
+        background-color: #18bc9c;
+    }
+
+    .grid-stack-item-removing {
+        opacity: 0.5;
+    }
+
+    p {
+        margin: 1em 0.5em;
+        color: red;
+    }
+
+    .panel-action {
+        list-style: none;
+        display: inline-block;
+        float: right;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+        .panel-action li {
+            display: inline-block;
+            color: #515d6e;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+    .sidebar-view {
+        margin-top: 5px;
+    }
+</style>
+
+<style>
+    /*Fix for modal not appearing in bootstrap v4*/
+    .fade.in {  
+        opacity: 1;
+    }
+
+    .modal.in .modal-dialog {
+        -webkit-transform: translate(0, 0);
+        -o-transform: translate(0, 0);
+        transform: translate(0, 0);
+    }
+
+    .modal-backdrop.in {
+        opacity: 0.5;
+    }
+</style>

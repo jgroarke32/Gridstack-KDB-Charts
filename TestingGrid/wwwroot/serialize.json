@@ -1,0 +1,41 @@
+﻿[
+  {
+    "x": 0,
+    "y": 0,
+    "width": 4,
+    "height": 6,
+    "type": "chart",
+    "options": {
+      "name": "one",
+      "show": "true",
+      "id": "chart1",
+      "func": "getrtfeed"
+    }
+  },
+  {
+    "x": 4,
+    "y": 0,
+    "width": 4,
+    "height": 6,
+    "type": "chart",
+    "options": {
+      "name": "two",
+      "show": "true",
+      "id": "chart2",
+      "func": "getSample"
+    }
+  },
+  {
+    "x": 8,
+    "y": 0,
+    "width": 4,
+    "height": 6,
+    "type": "carousel",
+    "options": {
+      "name": "three",
+      "show": "true",
+      "id": "chart3",
+      "func": "getrtfeed"
+    }
+  }
+]
