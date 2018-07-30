@@ -158,7 +158,7 @@ ko.bindingHandlers.gridStack = {
                         var innerBindingContext = bindingContext['createChildContext'](widgets[i]);
                         var itemElement = ko.bindingHandlers.gridStack.helpers.cloneNodes(template)[0];
                         grid.addWidget(itemElement, ko.unwrap(widgets[i].x), ko.unwrap(widgets[i].y), ko.unwrap(widgets[i].width), ko.unwrap(widgets[i].height), true, 4, 6, 5, 8, ko.unwrap(widgets[i].options().id));
-                        ko.applyBindings(innerBindingContext, itemElement)
+                        ko.applyBindings(innerBindingContext, itemElement);
                         vm.createstartingpos(widgets[i]);
                         newGridItems.push({ item: widgets[i], element: itemElement });
                     } else {
@@ -239,31 +239,30 @@ var vm = {
     },
     saveGrid: function () {
         var jsonData = ko.toJSON(vm.widgets);
-
         console.log(jsonData);
+        setCookie('jsonData', jsonData, 7);
     },
     currentWidget: ko.observable(null),
     objects: ko.observableArray([]),
     showoptions: function (widget) {
         vm.currentWidget(widget);
         $('#exampleModalLong').modal('show');
-
     },
     startsub: function (widget) {
-        console.log(ko.unwrap(widget));
-        console.log(vm.objects());
-        var chart = ko.utils.arrayFirst(vm.objects(), function (item) {
-            return (item.id === widget.id());
-        });
-        console.log(chart.obj);
-        if (chart.obj != undefined) {
-            chart.obj.options.title = {
-                display: true,
-                text: 'Custom Chart Title'
-            };
-            chart.obj.update();
-            createconn(chart.obj);
-        }
+        //console.log(ko.unwrap(widget));
+        //console.log(vm.objects());
+        //var chart = ko.utils.arrayFirst(vm.objects(), function (item) {
+        //    return (item.id === widget.id());
+        //});
+        //console.log(chart.obj);
+        //if (chart.obj != undefined) {
+        //    chart.obj.options.title = {
+        //        display: true,
+        //        text: 'Custom Chart Title'
+        //    };
+        //    chart.obj.update();
+        //    createconn(chart.obj);
+        //}
     },
     createstartingpos: function (item) {
         var item = item.options();
@@ -310,7 +309,7 @@ var vm = {
         };
         myChart.update();
         createconn();
-    }
+    }   //Needs to be chsnged for more widgets
 };
 
 vm.currentWidget.subscribe(function (newResult) {  //instead do this on save changes.
@@ -326,37 +325,59 @@ vm.currentWidget.subscribe(function (newResult) {  //instead do this on save cha
 ko.applyBindings(vm);
 
 function addwidgets() {
-
-    $.ajax({
-        type: "GET",
-        url: "serialize.json",
-        dataType: "json",
-        success: function (x) {
-            var result = x;
-            console.log(result);
-            for (var i = 0; i < result.length; i++) {
-                var origoptions = new Array(result[i].options);
-                var kooptions = ko.utils.arrayMap(origoptions, function (opt) {
-                    var optionskeys = Object.keys(opt);;
-                    for (var j = 0; j < optionskeys.length; j++) {
-                        var currone = optionskeys[j];
-                        console.log(opt[currone]);
-                        opt[currone] = ko.observable(opt[currone]);
-                    }
-                    return opt;
-                });
-                vm.widgets.push({
-                    x: ko.observable(result[i].x), y: ko.observable(result[i].y), width: ko.observable(result[i].width), height: ko.observable(result[i].height),
-                    options: ko.observable(kooptions[0])
-                });
-            }
-            uid.seed = result.length;
-        },
-        error: function (x) {
-            alert("Failed");
-            console.log(x);
+    var x = getCookie('jsonData');
+    if (x) {
+        var result = JSON.parse(x);
+        for (var i = 0; i < result.length; i++) {
+            var origoptions = new Array(result[i].options);
+            var kooptions = ko.utils.arrayMap(origoptions, function (opt) {
+                var optionskeys = Object.keys(opt);;
+                for (var j = 0; j < optionskeys.length; j++) {
+                    var currone = optionskeys[j];
+                    console.log(opt[currone]);
+                    opt[currone] = ko.observable(opt[currone]);
+                }
+                return opt;
+            });
+            vm.widgets.push({
+                x: ko.observable(result[i].x), y: ko.observable(result[i].y), width: ko.observable(result[i].width), height: ko.observable(result[i].height),
+                options: ko.observable(kooptions[0])
+            });
         }
-    });
+        uid.seed = result.length;
+    }
+    else {
+        $.ajax({
+            type: "GET",
+            url: "serialize.json",
+            dataType: "json",
+            success: function (x) {
+                var result = x;
+                console.log(result);
+                for (var i = 0; i < result.length; i++) {
+                    var origoptions = new Array(result[i].options);
+                    var kooptions = ko.utils.arrayMap(origoptions, function (opt) {
+                        var optionskeys = Object.keys(opt);;
+                        for (var j = 0; j < optionskeys.length; j++) {
+                            var currone = optionskeys[j];
+                            console.log(opt[currone]);
+                            opt[currone] = ko.observable(opt[currone]);
+                        }
+                        return opt;
+                    });
+                    vm.widgets.push({
+                        x: ko.observable(result[i].x), y: ko.observable(result[i].y), width: ko.observable(result[i].width), height: ko.observable(result[i].height),
+                        options: ko.observable(kooptions[0])
+                    });
+                }
+                uid.seed = result.length;
+            },
+            error: function (x) {
+                alert("Failed");
+                console.log(x);
+            }
+        });
+    }
 };
 addwidgets();
 
@@ -444,15 +465,7 @@ function IsJsonString(e) {
         console.log(e);
     }
     return true;
-}
-
-//setInterval(function () {
-//    ws = util.ws.webSocket.getInstance("wss://" + "35.204.238.205" + ":" + "5656" + "/");
-//    var list = util.functionsarray;
-//    for (i = 0; i < list.length; i++) {
-//        ws.send(list[i]);
-//    }
-//}, 10000);
+}   //Needs to be chsnged for more widgets
 
 function random_rgba() {  //possibly put in utils
     var o = Math.round, r = Math.random, s = 255;
@@ -480,3 +493,26 @@ var uid = function () {
         }
     }
 }();
+
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+function eraseCookie(name) {
+    document.cookie = name + '=; Max-Age=-99999999;';
+}
