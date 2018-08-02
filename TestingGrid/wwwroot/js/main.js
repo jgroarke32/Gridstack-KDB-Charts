@@ -7,6 +7,7 @@
     util.ws = {};
     util.pageload = {};
     util.functionsarray = [];
+    util.startingposfuncs = [];
     var registermessageHandler = [];
     // ws=websocket,onsuccess=function to process data when auth check complete
     util.ws.onmessage = function (ws, onsuccess) {
@@ -208,8 +209,10 @@ var vm = {
         //    { x: ko.observable(6), y: ko.observable(0), width: ko.observable(2), height: ko.observable(4) },
         //    { x: ko.observable(1), y: ko.observable(2), width: ko.observable(4), height: ko.observable(2) }
     ]),
-    add: function () {
-        var origoptions = new Array({ "name": uid.seed, "show": "true", "id": uid.new("Line-Chart"), "func": "getrtfeed" });
+    widgetType: ko.observableArray(),
+    add: function (WidgetType) {
+        var wtype = ko.utils.arrayFirst(vm.widgetType(), function (wig) { return wig.TypeName == WidgetType.TypeName });
+        var origoptions = new Array({ "name": util.seed, "show": "true", "id": uid.new("Line-Chart"), "func": "getrtfeed", "htmllink": wtype.nestedhtml });
         var kooptions = ko.utils.arrayMap(origoptions, function (opt) {
             var optionskeys = Object.keys(opt);;
             for (var j = 0; j < optionskeys.length; j++) {
@@ -219,10 +222,10 @@ var vm = {
             }
             return opt;
         });
-            vm.widgets.push({
-                x: ko.observable(0), y: ko.observable(0), width: ko.observable(4), height: ko.observable(2),
-                options: ko.observable(kooptions[0])
-            });
+        vm.widgets.push({
+            x: ko.observable(0), y: ko.observable(0), width: ko.observable(4), height: ko.observable(2), type: WidgetType.TypeName, 
+            options: ko.observable(kooptions[0])
+        });
     },
     twoWay: function () {
         if (vm.widgets()[0].x() == 10) {
@@ -250,65 +253,29 @@ var vm = {
 
     },
     startsub: function (widget) {
-        console.log(ko.unwrap(widget));
-        console.log(vm.objects());
-        var chart = ko.utils.arrayFirst(vm.objects(), function (item) {
-            return (item.id === widget.id());
-        });
-        console.log(chart.obj);
-        if (chart.obj != undefined) {
-            chart.obj.options.title = {
-                display: true,
-                text: 'Custom Chart Title'
-            };
-            chart.obj.update();
-            createconn(chart.obj);
-        }
+        //console.log(ko.unwrap(widget));
+        //console.log(vm.objects());
+        //var chart = ko.utils.arrayFirst(vm.objects(), function (item) {
+        //    return (item.id === widget.id());
+        //});
+        //console.log(chart.obj);
+        //if (chart.obj != undefined) {
+        //    chart.obj.options.title = {
+        //        display: true,
+        //        text: 'Custom Chart Title'
+        //    };
+        //    chart.obj.update();
+        //    createconn(chart.obj);
+        //}
     },
     createstartingpos: function (item) {
-        var item = item.options();
-        var queuelabels = [];
-        var config = {
-            type: 'line',
-            data: {
-                labels: queuelabels,
-                datasets: []
-            },
-
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {}
-                    }],
-                    xAxes: [{
-                        type: "time",
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Date'
-                        },
-                        ticks: {
-                            autoSkip: true
-                        }
-
-                    }],
-                }
+        for (var i = 0; i < util.startingposfuncs.length; i++) {
+            if (util.startingposfuncs[i].WidgetType === item.type) {
+                util.startingposfuncs[i].func(item);
             }
-        };
-
-        var ctx = document.getElementById(item.id()).getContext("2d");
-        var myChart = new Chart(ctx, config);
-        myChart.queuelabels = [];
-        myChart.roomarray = [];
-        myChart.queue = [];
-        myChart.multiarray = [myChart.queue];
-        var top = item.id;
-        vm.objects.push({ id: item.id(), obj: myChart, func: (item.func() + "[]") });
-        myChart.options.title = {
-            display: true,
-            text: 'Custom Chart Title'
-        };
-        myChart.update();
+        }
+        
+      
         createconn();
     }
 };
@@ -324,9 +291,41 @@ vm.currentWidget.subscribe(function (newResult) {  //instead do this on save cha
 });
 
 ko.applyBindings(vm);
+function getWidgets () {
+    for (var i = 0; i < JSONsource.length; i++) {
+        loadScript("/Widgets/" + JSONsource[i] + "/widget.js");
+      
+        var url = "/Widgets/" + JSONsource[i] + "/widget.html";
+        $.ajax({
+            type: "GET",
+            url: url,
+            dataType: "html",
+            success: function (innerhtml) {
+                var tname = this.url.replace("/Widgets/", '');
+                tname = tname.replace("/widget.html", '');
+                vm.widgetType.push({ TypeName: tname, nestedhtml: innerhtml }); //array push here then after function join together;
+            },
+            error: function (x) {
+                alert("Failed");
+            }
+        });
+        
+    }
+}
+getWidgets();
+_.once = function (func) {
+    var ran = false, memo;
+    return function () {
+        if (ran) return memo;
+        ran = true;
+        memo = func.apply(this, arguments);
+        func = null;
+        return memo;
+    };
+};
 
-function addwidgets() {
-
+var addwidgets = function () {
+    addwidgets = function () { };
     $.ajax({
         type: "GET",
         url: "serialize.json",
@@ -337,7 +336,10 @@ function addwidgets() {
             for (var i = 0; i < result.length; i++) {
                 var origoptions = new Array(result[i].options);
                 var kooptions = ko.utils.arrayMap(origoptions, function (opt) {
-                    var optionskeys = Object.keys(opt);;
+                    console.log(vm.widgetType());
+                    var wtype = ko.utils.arrayFirst(vm.widgetType(), function (wig) { return wig.TypeName == result[i].type });
+                    opt.htmllink = wtype.nestedhtml; 
+                    var optionskeys = Object.keys(opt);
                     for (var j = 0; j < optionskeys.length; j++) {
                         var currone = optionskeys[j];
                         console.log(opt[currone]);
@@ -346,11 +348,11 @@ function addwidgets() {
                     return opt;
                 });
                 vm.widgets.push({
-                    x: ko.observable(result[i].x), y: ko.observable(result[i].y), width: ko.observable(result[i].width), height: ko.observable(result[i].height),
+                    x: ko.observable(result[i].x), y: ko.observable(result[i].y), width: ko.observable(result[i].width), height: ko.observable(result[i].height), type: result[i].type,
                     options: ko.observable(kooptions[0])
                 });
             }
-            uid.seed = result.length;
+            util.seed = result.length;
         },
         error: function (x) {
             alert("Failed");
@@ -358,12 +360,12 @@ function addwidgets() {
         }
     });
 };
-addwidgets();
+//addwidgets();
 
 function createconn() {
     ws = util.ws.webSocket.getInstance("wss://" + "35.204.238.205" + ":" + "5656" + "/");
     util.ws.onopencheck(ws, fetFeed);
-    util.ws.onmessage(ws, IsJsonString);
+  //  util.ws.onmessage(ws, IsJsonString); //Add more here or at the end of each widget js file.
 }
 
 function fetFeed(ws) {
@@ -381,102 +383,3 @@ function fetFeed(ws) {
     }
 }
 
-function IsJsonString(e) {
-    var json = e.decoded;
-    //console.log(json);
-
-    var funcsubs = ko.utils.arrayMap(vm.objects(), function (item) {
-        if (json.function == item.func) {
-            return item.obj;
-        }
-    });
-    funcsubs = funcsubs.filter(function (n) { return n != undefined });
-    try {
-        for (var i = 0; i < funcsubs.length; i++) {
-            var myChart = funcsubs[i];
-            //var data = json.data[0]; //First element in array;
-            for (var j = 0; j < json.data.length; j++) {
-                //var data = json.data[json.data.length - 1] //Last element in array
-                var data = json.data[j];
-                var room = data.sym;
-                if (myChart.roomarray.includes(room) === false) {
-
-                    myChart.roomarray.push(room);
-                };
-                var roomindex = myChart.roomarray.indexOf(room);
-                var flowrate = data.temp;
-                var d = getTime(data.time);
-
-                if (flowrate == null) {
-                    alert(data);
-                }
-                else {
-                    var roomdata = myChart.multiarray[roomindex];
-                    if (roomdata === undefined) { roomdata = []; }
-                    roomdata.push(flowrate);
-                    myChart.multiarray[roomindex] = roomdata;
-                    if (myChart.data.datasets.length <= roomindex) {
-                        var color = random_rgba(); //Colours could be observable
-                        myChart.data.datasets[roomindex] =
-                            {
-                                label: room, //Room observable
-                                data: myChart.multiarray[roomindex],
-                                backgroundColor: color,
-                                borderColor: color,
-                            borderWidth: 1,
-                            fill: false
-                            };
-                    }
-
-                    else {
-                        myChart.data.datasets[roomindex].data = myChart.multiarray[roomindex];
-                    }
-
-                    if (myChart.multiarray[0].length > myChart.queuelabels.length) { myChart.queuelabels.push(d); myChart.data.labels = myChart.queuelabels };
-
-                    if (myChart.data.labels.length > 20) { }
-
-                    myChart.update();
-                }
-            }
-        }
-    } catch (e) {
-        console.log(e);
-    }
-    return true;
-}
-
-//setInterval(function () {
-//    ws = util.ws.webSocket.getInstance("wss://" + "35.204.238.205" + ":" + "5656" + "/");
-//    var list = util.functionsarray;
-//    for (i = 0; i < list.length; i++) {
-//        ws.send(list[i]);
-//    }
-//}, 10000);
-
-function random_rgba() {  //possibly put in utils
-    var o = Math.round, r = Math.random, s = 255;
-    return 'rgba(' + o(r() * s) + ',' + o(r() * s) + ',' + o(r() * s) + ',' + r().toFixed(1) + ')';
-}
-
-function getTime(jstime) {
-    var time = jstime;
-    var time = time.replace('0D', '');
-    var hour = time.charAt(0) + time.charAt(1);
-    var minute = time.charAt(3) + time.charAt(4);
-    var sec = time.charAt(6) + time.charAt(7);
-    var millisec = time.charAt(8) + time.charAt(9) + time.charAt(10);
-    var d = new Date();
-    var momentDate = moment(d);
-    d.setHours(hour, minute, sec, millisec);
-    return d;
-}
-
-var uid = function () {
-    var seed = 1;
-    return {
-        new: function (p) {
-            return p + (seed++);
-        }
-    }
-}();

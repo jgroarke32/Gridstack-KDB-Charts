@@ -1,4 +1,4 @@
-﻿
+﻿@model List<String>
 <head>
 
 
@@ -16,7 +16,9 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
 
-
+    <script>
+    JSONsource =  @Html.Raw(Json.Serialize(Model));
+    </script>
     <style type="text/css">
         .grid-stack {
             background: lightgoldenrodyellow;
@@ -30,15 +32,16 @@
     </style>
 </head>
 <body>
-    <button data-bind="click:add">Add</button>
     <button data-bind="click:saveGrid">Save</button>
+    <!-- ko foreach:vm.widgetType -->
+    <button data-bind="click: $root.add, text: TypeName"></button>
+    <!--/ko-->
     @*<button data-bind="click:twoWay">twoWay</button>*@
     <div class="grid-stack" data-bind="gridStack:{ widgets:widgets }">
-        <div class="grid-stack-item" >
+        <div class="grid-stack-item">
             <div class="grid-stack-item-content">
                 @*<button data-bind="click: $parent.delete">Delete me</button>
-                    <div data-bind="text:x"></div><div data-bind="text:y"></div>
-                    <div data-bind="text:width"></div><div data-bind="text:height"></div>*@
+                    <div data-bind="text:x"></div><div data-bind="text:y"></div><div data-bind="text:width"></div><div data-bind="text:height"></div>*@
                 <div data-bind="with: options">
                     <div class="card-header" style="height:10%">
                         <div class="row">
@@ -48,21 +51,13 @@
                             <div class="col-sm-6">
                                 <ul class="panel-action">
                                     <li><i class="fas fa-trash-alt remove-widget" data-bind="click: $root.delete"></i></li>
-                                    @*<li><button type="button" class="btn btn-primary" data-bind="click: $root.showoptions">options</button></li>*@
                                     <li><i class="fas fa-edit" data-bind="click: $root.showoptions"></i></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
-                        @*<div class="pure-u-1">
-                            <div id="line-example">*@
-                        @*<h2>Charts</h2><input type="button" value="connect" data-bind="click:$root.startsub">*@
-                        <i class="fas fa-plug" data-bind="click:$root.startsub" style="cursor: pointer"></i>
-
-                        <canvas data-bind="attr: {id:id}"></canvas>
-                        @*</div>
-                            </div>*@
+                        <div data-bind="template: {nodes: ko.utils.parseHtmlFragment(htmllink())}" name="targetframe" allowTransparency="true" scrolling="no" frameborder="0"></div>
                     </div>
                 </div>
             </div>
@@ -90,31 +85,8 @@
     </div>
 
 </body>
+<script src="~/js/utilities.js"></script>
 <script src="~/js/main.js"></script>
-<template id="card-layout">
-    <div class="card-header" style="height:10%">
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="text-left">Featured</div>
-            </div>
-            <div class="col-sm-6">
-                <ul class="panel-action">
-                    <li>Menu</li>
-                    <li><i class="fa fa-chevron-down"></i></li>
-                    <li><i class="fas fa-trash-alt remove-widget"></i></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="card-body" style="width:100%; height:90%">
-        <div class="pure-u-1">
-            <div id="line-example">
-                <h2>Charts</h2><input type="button" value="connect" data-bind="click: function(){ connect()}">
-                <canvas data-bind="attr: {id:id}"></canvas>
-            </div>
-        </div>
-    </div>
-</template>
 
 <style>
     .grid-stack {
@@ -173,7 +145,7 @@
 
 <style>
     /*Fix for modal not appearing in bootstrap v4*/
-    .fade.in {  
+    .fade.in {
         opacity: 1;
     }
 

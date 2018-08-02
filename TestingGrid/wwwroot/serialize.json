@@ -4,11 +4,11 @@
     "y": 0,
     "width": 4,
     "height": 6,
-    "type": "chart",
+    "type": "Line-Chart",
     "options": {
       "name": "one",
       "show": "true",
-      "id": "chart1",
+      "id": "Line-Chart1",
       "func": "getrtfeed"
     }
   },
@@ -17,11 +17,11 @@
     "y": 0,
     "width": 4,
     "height": 6,
-    "type": "chart",
+    "type": "Line-Chart",
     "options": {
       "name": "two",
       "show": "true",
-      "id": "chart2",
+      "id": "Line-Chart2",
       "func": "getSample"
     }
   },
@@ -30,11 +30,11 @@
     "y": 0,
     "width": 4,
     "height": 6,
-    "type": "carousel",
+    "type": "Carousel",
     "options": {
       "name": "three",
       "show": "true",
-      "id": "chart3",
+      "id": "Carousel3",
       "func": "getrtfeed"
     }
   }
