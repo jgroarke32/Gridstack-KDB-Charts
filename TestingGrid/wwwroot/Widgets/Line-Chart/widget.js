@@ -1,6 +1,7 @@
 ﻿function IsJsonString(e) {
     var json = e.decoded;
-    //console.log(json);
+    //var json = jsonobj.data;
+    console.log(vm.objects());
 
     var funcsubs = ko.utils.arrayMap(vm.objects(), function (item) {
         if (json.function == item.func) {
@@ -103,13 +104,12 @@ function createLineChart(item) {
     myChart.queue = [];
     myChart.multiarray = [myChart.queue];
     var top = item.id;
-    vm.objects.push({ id: item.id(), obj: myChart, func: (item.func() + "[]") });
+    vm.objects.push({ id: item.id(), obj: myChart, func: (item.func()) });
     myChart.options.title = {
         display: true,
         text: 'Custom Chart Title'
     };
     myChart.update();
-    createconn();
 }
 
 util.startingposfuncs.push({ WidgetType: "Line-Chart", "func": createLineChart });

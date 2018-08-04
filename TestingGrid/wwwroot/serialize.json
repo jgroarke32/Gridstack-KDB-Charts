@@ -9,7 +9,8 @@
       "name": "one",
       "show": "true",
       "id": "Line-Chart1",
-      "func": "getrtfeed"
+      "func": "RealTimeTemp",
+      "backgroundc": "#f1613d"
     }
   },
   {
@@ -22,7 +23,8 @@
       "name": "two",
       "show": "true",
       "id": "Line-Chart2",
-      "func": "getSample"
+      "func": "TestFunc",
+      "backgroundc": "#f1613d"
     }
   },
   {
@@ -35,7 +37,8 @@
       "name": "three",
       "show": "true",
       "id": "Carousel3",
-      "func": "getrtfeed"
+      "func": "RealTimeTemp",
+      "backgroundc": "#f1613d"
     }
   }
 ]

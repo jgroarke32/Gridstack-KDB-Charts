@@ -23,8 +23,6 @@
     };
     document.getElementsByTagName('head')[0].appendChild(s);
     //document.body.appendChild(js);
-
-    console.log(document.getElementById("script"))
 }
 
 function random_rgba() {  //possibly put in utils
@@ -44,7 +42,7 @@ function getTime(jstime) {
     d.setHours(hour, minute, sec, millisec);
     return d;
 }
-//util.seed = 1;
+
 var uid = function () {
     
     return {
@@ -53,3 +51,20 @@ var uid = function () {
         }
     }
 }();
+
+function alertmessage(message) {
+    document.getElementById('snoAlertBox').innerHTML = message;
+    showalert();
+}
+
+function showalert() {
+    $("#snoAlertBox").fadeIn();
+    closeSnoAlertBox();
+};
+
+function closeSnoAlertBox() {
+    window.setTimeout(function () {
+        $("#snoAlertBox").fadeOut(4000)
+    }, 4000);
+}
+

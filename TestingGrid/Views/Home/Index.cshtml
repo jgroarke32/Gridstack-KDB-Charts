@@ -19,34 +19,22 @@
     <script>
     JSONsource =  @Html.Raw(Json.Serialize(Model));
     </script>
-    <style type="text/css">
-        .grid-stack {
-            background: lightgoldenrodyellow;
-        }
-
-        .grid-stack-item-content {
-            color: #2c3e50;
-            text-align: center;
-            background-color: #18bc9c;
-        }
-    </style>
 </head>
 <body>
     <button data-bind="click:saveGrid">Save</button>
     <!-- ko foreach:vm.widgetType -->
     <button data-bind="click: $root.add, text: TypeName"></button>
     <!--/ko-->
-    @*<button data-bind="click:twoWay">twoWay</button>*@
     <div class="grid-stack" data-bind="gridStack:{ widgets:widgets }">
         <div class="grid-stack-item">
-            <div class="grid-stack-item-content">
+            <div class="grid-stack-item-content" data-bind="style: { background : options().backgroundc()}">
                 @*<button data-bind="click: $parent.delete">Delete me</button>
                     <div data-bind="text:x"></div><div data-bind="text:y"></div><div data-bind="text:width"></div><div data-bind="text:height"></div>*@
                 <div data-bind="with: options">
-                    <div class="card-header" style="height:10%">
-                        <div class="row">
+                    <div class="card-header row" style="height:10%">
+                        
                             <div class="col-sm-6">
-                                <h3 class="text-left" data-bind="text: name"></h3>
+                                <div class="text-left" data-bind="text: name"></div>
                             </div>
                             <div class="col-sm-6">
                                 <ul class="panel-action">
@@ -54,11 +42,10 @@
                                     <li><i class="fas fa-edit" data-bind="click: $root.showoptions"></i></li>
                                 </ul>
                             </div>
-                        </div>
+                  
                     </div>
-                    <div class="card-body">
-                        <div data-bind="template: {nodes: ko.utils.parseHtmlFragment(htmllink())}" name="targetframe" allowTransparency="true" scrolling="no" frameborder="0"></div>
-                    </div>
+                    <div class="card-body" data-bind="template: {nodes: ko.utils.parseHtmlFragment(htmllink())}" name="targetframe" allowTransparency="true" scrolling="no" frameborder="0">
+                  </div>
                 </div>
             </div>
         </div>
@@ -75,22 +62,46 @@
                 </div>
                 <div class="modal-body">
                     <input data-bind="value: name" />
+
+                    <div>
+                        <div class="label">Drop-down list:</div>
+                        <div><select data-bind="options: $root.Funcs(), value:func"></select></div>
+                    </div>
+                    <input type="color" data-bind="value: backgroundc" />
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" ata-bind="click:$root.cancelItemEdit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" data-bind="click:$root.acceptItemEdit" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
     </div>
 
-</body>
-<script src="~/js/utilities.js"></script>
-<script src="~/js/main.js"></script>
+    
 
+</body><span id="snoAlertBox" class="alert alert-success" data-alert="alert"></span>
+<script src="~/js/utilities.js"></script>
+
+<script src="~/js/main.js"></script>
+<script src="~/js/BindingHandlers.js"></script>
+<script src="~/js/ViewModel.js"></script>
 <style>
+    #snoAlertBox {
+        position: absolute;
+        z-index: 1400;
+        top: 10%;
+        right: 4%;
+        margin: 0px auto;
+        text-align: center;
+        display: none;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
     .grid-stack {
-        /*   background: #66a3ff; */
+        background: lightgoldenrodyellow;
     }
 
     .grid-container {
@@ -108,11 +119,11 @@
         font-size: 20px;
     }
 
-    .grid-stack-item-content {
+    /*.grid-stack-item-content {
         color: #2c3e50;
         text-align: center;
         background-color: #18bc9c;
-    }
+    }*/
 
     .grid-stack-item-removing {
         opacity: 0.5;

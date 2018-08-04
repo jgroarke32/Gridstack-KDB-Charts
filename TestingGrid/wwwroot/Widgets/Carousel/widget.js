@@ -1,6 +1,6 @@
 ﻿function createLineChart(item) {
+    var item = item.options();
     $('.myCarousel').carousel();
-    alert(item);
 }
 
 
