@@ -89,7 +89,7 @@ function getWidgets() {
                 _.each(arrayOfStrings, function (widget, index, list) {
                     arrayOfStrings[index] = Number(_.last(widget));
                 });
-                vm.widgetType.push({ TypeName: tname, nestedhtml: innerhtml, maxHeight: arrayOfStrings[0], maxWidth: arrayOfStrings[1] }); //array push here then after function join together;
+                vm.widgetType.push({ TypeName: tname, nestedhtml: innerhtml.substring(18), maxHeight: arrayOfStrings[0], maxWidth: arrayOfStrings[1] }); //array push here then after function join together;
             },
             error: function (x) {
                 alert("Failed");
