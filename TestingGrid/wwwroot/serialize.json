@@ -4,12 +4,13 @@
     "y": 0,
     "width": 4,
     "height": 6,
-    "type": "chart",
+    "type": "Line-Chart",
     "options": {
       "name": "one",
       "show": "true",
-      "id": "chart1",
-      "func": "getrtfeed"
+      "id": "Line-Chart1",
+      "func": "RealTimeTemp",
+      "backgroundc": "#f1613d"
     }
   },
   {
@@ -17,12 +18,13 @@
     "y": 0,
     "width": 4,
     "height": 6,
-    "type": "chart",
+    "type": "Line-Chart",
     "options": {
       "name": "two",
       "show": "true",
-      "id": "chart2",
-      "func": "getSample"
+      "id": "Line-Chart2",
+      "func": "TestFunc",
+      "backgroundc": "#f1613d"
     }
   },
   {
@@ -30,12 +32,13 @@
     "y": 0,
     "width": 4,
     "height": 6,
-    "type": "carousel",
+    "type": "Carousel",
     "options": {
       "name": "three",
       "show": "true",
-      "id": "chart3",
-      "func": "getrtfeed"
+      "id": "Carousel3",
+      "func": "RealTimeTemp",
+      "backgroundc": "#f1613d"
     }
   }
 ]
