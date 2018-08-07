@@ -193,17 +193,20 @@
         </div>
     </nav>
 
-    <aside class="main-sidebar" id="sidebar">      
-                <ul>
-                    <!-- ko foreach:vm.widgetType -->
-                    <li style="padding-top: 50px">  <a data-bind="click: $root.add, text: TypeName"></a></li>
-                    <!--/ko-->
-                </ul>
-        <div style="display:none;">
-            <!-- sidebar menu: : style can be found in sidebar.less -->
+    <aside class="main-sidebar" id="sidebar">
+        <!-- ko foreach:vm.widgetType -->
+        <div class="card" style="width: 18rem; cursor: pointer;">
+            <div class="card-body">
+                <h5 class="card-title"></h5>
+                <p class="card-text" data-bind="click: $root.add, text: TypeName"></p>
+            </div>
         </div>
+            <!--/ko-->
 
-        <!-- /.sidebar -->
+            <div style="display:none;">
+            </div> 
+
+            <!-- /.sidebar -->
     </aside>
 
     <div class="content-wrapper" id="content">
