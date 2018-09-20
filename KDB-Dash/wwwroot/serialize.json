@@ -1,0 +1,44 @@
+﻿[
+  {
+    "x": 0,
+    "y": 0,
+    "width": 4,
+    "height": 6,
+    "type": "Line-Chart",
+    "options": {
+      "name": "one",
+      "show": "true",
+      "id": "Line-Chart1",
+      "func": "RealTimeTemp",
+      "backgroundc": "#f1613d"
+    }
+  },
+  {
+    "x": 4,
+    "y": 0,
+    "width": 4,
+    "height": 6,
+    "type": "Line-Chart",
+    "options": {
+      "name": "two",
+      "show": "true",
+      "id": "Line-Chart2",
+      "func": "TestFunc",
+      "backgroundc": "#f1613d"
+    }
+  },
+  {
+    "x": 8,
+    "y": 0,
+    "width": 4,
+    "height": 6,
+    "type": "Carousel",
+    "options": {
+      "name": "three",
+      "show": "true",
+      "id": "Carousel3",
+      "func": "RealTimeTemp",
+      "backgroundc": "#f1613d"
+    }
+  }
+]

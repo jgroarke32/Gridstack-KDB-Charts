@@ -1,0 +1,251 @@
+﻿@model List<String>
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.0/jquery-ui.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.4.0/knockout-min.js"></script>
+    <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.3.0/gridstack.min.js'></script>
+    <script type="text/javascript" src='//cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.3.0/gridstack.jQueryUI.min.js'></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"></script>
+
+    <script>
+    JSONsource =  @Html.Raw(Json.Serialize(Model));
+    </script>
+
+    <style type="text/css">
+        .grid-stack {
+            background: lightgoldenrodyellow;
+        }
+
+        .grid-stack-item-content {
+            color: #2c3e50;
+            text-align: center;
+            background-color: #18bc9c;
+        }
+    </style>
+
+    <script>
+        function toggle() {
+            var item = $('#sidebar');
+            if (!$('#sidebar').hasClass('animated')) {
+                $('#sidebar').addClass('animated fadeOutLeft');
+                $("#content").css({ 'margin-left': "0px" });
+
+                $('#sidebar').on('animationend mozanimationend webkitAnimationEnd oAnimationEnd msanimationend', function () {
+                    $('#sidebar').hide();
+                    $('#sidebar').removeClass('fadeOutLeft');
+                });
+
+            }
+            else if ($('#sidebar').hasClass('fadeInLeft')) {
+                $('#sidebar').removeClass('fadeInLeft');
+                $('#sidebar').addClass('fadeOutLeft');
+                $("#content").css({ 'margin-left': "0px" });
+                $('#sidebar').on('animationend mozanimationend webkitAnimationEnd oAnimationEnd msanimationend', function () {
+                    $('#sidebar').hide();
+                    $('#sidebar').removeClass('fadeOutLeft');
+                });
+            }
+            else {
+                $('#sidebar').addClass('fadeInLeft'); $("#content").css({ 'margin-left': "230px" });
+                $('#sidebar').show();
+                $('#sidebar').on('animationend mozanimationend webkitAnimationEnd oAnimationEnd msanimationend', function () {
+                    $('#sidebar').show();
+                });
+            }
+        };
+    </script>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="affix navbar navbar-fixed-top ">
+        <header class="main-header">
+            <!-- Logo -->
+            <a href="#" class="logo">
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg"><b>KDB</b>Gridstack</span>
+            </a>
+        </header>
+        <!-- Navbar Right Menu -->
+        <div class="navbar-custom-menu navbar-nav ml-aut">
+            <ul class="nav navbar-right">
+                <li> <button data-bind="click:saveGrid">Save</button></li>
+                <li><button type="button" class="btn btn-primary" onclick="toggle()">Toggle</button></li>
+                <li>@await Html.PartialAsync("_LoginPartial")</li>
+            </ul>
+        </div>
+    </nav>
+
+    <aside class="main-sidebar" id="sidebar">
+        <!-- ko foreach:vm.widgetType -->
+        <div class="card" style="width: 18rem; cursor: pointer;">
+            <div class="card-body">
+                <h5 class="card-title"></h5>
+                <p class="card-text" data-bind="click: $root.add, text: TypeName"></p>
+            </div>
+        </div>
+        <!--/ko-->
+
+        <div style="display:none;">
+        </div>
+
+        <!-- /.sidebar -->
+    </aside>
+
+    <div class="content-wrapper" id="content">
+        <div class="grid-stack" data-bind="gridStack:{ widgets:widgets }">
+            <div class="grid-stack-item">
+                <div class="grid-stack-item-content" data-bind="style: { background : options().backgroundc()}">
+                    @*<button data-bind="click: $parent.delete">Delete me</button>
+                        <div data-bind="text:x"></div><div data-bind="text:y"></div><div data-bind="text:width"></div><div data-bind="text:height"></div>*@
+                    <div data-bind="with: options">
+                        <div class="card-header row" style="height:10%">
+
+                            <div class="col-xs-6">
+                                <div class="text-left" data-bind="text: name"></div>
+                            </div>
+                            <div class="col-xs-6">
+                                <ul class="panel-action">
+                                    <li><i class="fas fa-trash-alt remove-widget" data-bind="click: $root.delete"></i></li>
+                                    <li><i class="fas fa-edit" data-bind="click: $root.showoptions"></i></li>
+                                </ul>
+                            </div>
+
+                        </div>
+                        <div class="card-body" data-bind="template: {nodes: ko.utils.parseHtmlFragment(htmllink())}" name="targetframe" allowTransparency="true" scrolling="no" frameborder="0">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" data-bind="with:currentWidget">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Options</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <input data-bind="value: name" />
+
+                        <div>
+                            <div class="label">Drop-down list:</div>
+                            <div><select data-bind="options: $root.Funcs(), value:func"></select></div>
+                        </div>
+                        <input type="color" data-bind="value: backgroundc" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" ata-bind="click:$root.cancelItemEdit" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" data-bind="click:$root.acceptItemEdit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <footer>
+        <p>© 2018 - KSB</p> <button onclick="helpme()">I am a button</button>
+    </footer>
+
+</body><span id="snoAlertBox" class="alert alert-success" data-alert="alert"></span>
+<script src="~/js/utilities.js"></script>
+
+<script src="~/js/main.js"></script>
+<script src="~/js/BindingHandlers.js"></script>
+<script src="~/js/ViewModel.js"></script>
+<style>
+    #snoAlertBox {
+        position: absolute;
+        z-index: 1400;
+        top: 10%;
+        right: 4%;
+        margin: 0px auto;
+        text-align: center;
+        display: none;
+    }
+
+    .card-body {
+        padding: 0;
+    }
+
+    .grid-stack {
+        background: lightgoldenrodyellow;
+    }
+
+    .grid-container {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: 542px;
+        background: grey;
+    }
+
+    .grid-stack-item-content {
+        background: white;
+        color: #2c3e50;
+        font-family: 'Indie Flower';
+        text-align: center;
+        font-size: 20px;
+    }
+
+    /*.grid-stack-item-content {
+        color: #2c3e50;
+        text-align: center;
+        background-color: #18bc9c;
+    }*/
+
+    .grid-stack-item-removing {
+        opacity: 0.5;
+    }
+
+    p {
+        margin: 1em 0.5em;
+        color: red;
+    }
+
+    .panel-action {
+        list-style: none;
+        display: inline-block;
+        float: right;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+
+        .panel-action li {
+            display: inline-block;
+            color: #515d6e;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+    .sidebar-view {
+        margin-top: 5px;
+    }
+</style>
+
+<style>
+    /*Fix for modal not appearing in bootstrap v4*/
+    .fade.in {
+        opacity: 1;
+    }
+
+    .modal.in .modal-dialog {
+        -webkit-transform: translate(0, 0);
+        -o-transform: translate(0, 0);
+        transform: translate(0, 0);
+    }
+
+    .modal-backdrop.in {
+        opacity: 0.5;
+    }
+</style>

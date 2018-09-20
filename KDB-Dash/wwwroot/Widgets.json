@@ -1,0 +1,18 @@
+﻿{
+  "Widgets": [
+    {
+      "name": "Carousel",
+      "id": "carousel",
+      "icon": "far fa-images",
+      "link": "/Widgets/Carousel/carouselwidget.html",
+      "script": ""
+    },
+    {
+      "name": "Chart",
+      "id": "chart",
+      "icon": "fas fa-chart-area",
+      "link": "/Widgets/Chart/chartwidget.html",
+      "script": "/Widgets/Chart/ChartWidget.js"
+    }
+  ]
+}
