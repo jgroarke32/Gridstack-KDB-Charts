@@ -49,6 +49,12 @@ namespace KDB_Dash
                 app.UseExceptionHandler("/Home/Error");
             }
 
+            app.Use((context, next) =>
+            {
+                context.Request.Scheme = "https";
+                return next();
+            });
+
             app.UseStaticFiles();
 
             app.UseAuthentication();
